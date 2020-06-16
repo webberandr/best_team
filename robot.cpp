@@ -19,7 +19,7 @@ int getWhitePixels(int row, int column){
  * returns that value multiplied by kp.error
  */
 double findError(){
-	int row=0;
+	int row=30;
 	double centreWhite;
 	int firstWhite=-1;//initialising at value lower than lowest possible value for column
 	int lastWhite=0;
@@ -32,7 +32,7 @@ double findError(){
 	}
 	}
 	centreWhite=((firstWhite+lastWhite)/2);//finds centre of white line
-	double error = (centreWhite-75)*0.05;//finds error with kp.error
+	double error = (centreWhite-75);//finds error with kp.error
 	if (firstWhite!=-1){
 	return error;
 }
@@ -55,7 +55,27 @@ bool left_or_right(int column){
 	return false;
 }
 
+/**function for returning how far down is line from top when on side*/
+double sideError(int column){
+	for (int row = 0; row<100; row++){
+		//std::cout<<getWhitePixels(row, column);
+		if (getWhitePixels(row, column)==1){
+			return row;
+		}
+	}
+	return 0;
+}
+
 int main(){
+	double turnSpeed=20.0;
+	double forward=40.0;
+	bool sideLine = false;
+	bool rightTurn = true;
+	double sideKP = 0.2;
+	double frontKP = 0.07;
+	double turn = 50;
+	int left = 40;
+	int right = 110;
 	if (initClientRobot() !=0){
 		std::cout<<" Error initializing robot"<<std::endl;
 	}
@@ -64,24 +84,36 @@ int main(){
     double vRight;
     //SavePPMFile("i0.ppm",cameraView);
     while(1){
+		if (sideError(left)>=turn||sideError(right)>=turn){
+			sideLine=true;
+		}
+		if (sideError(left)<=1&&sideError(right)<=1){
+			sideLine=false;
+		}
       takePicture();
-      if (!left_or_right(149)&&!left_or_right(0)){
-	  vRight=40.0-findError();
-      vLeft=40.0+findError();
+      if (!sideLine){
+	  vRight=forward-findError()*frontKP;
+      vLeft=forward+findError()*frontKP;
   }
-   else if (left_or_right(0)){//turns left sharply if detects line in bottom 3/4 of left of image
-		  vRight=40.0;
-		  vLeft=10.0;
-	  }
-	else if (left_or_right(149)){//turns right sharply if detects line on right column of image, this one needs to take precedence for completion
-		  vRight=10.0;
-		  vLeft=40.0;
-	  }
+   else {
+	   if (sideError(left)==0){
+		   rightTurn=true;
+	   }
+	   if (sideError(left)>0&&sideError(right)==0){
+		   rightTurn=false;
+		   vRight=turnSpeed+sideError(left)*sideKP;
+		   vLeft=turnSpeed-sideError(left)*sideKP;
+	   }
+	   else if (sideError(right)>0&&rightTurn){
+		   vRight=turnSpeed-sideError(left)*sideKP;
+		  vLeft=turnSpeed+sideError(right)*sideKP;
+	   }
+  }
       //checkWhitePixels();
       setMotors(vLeft,vRight);
      // std::cout<<"Error = "<<findError()<<" VPError= "<<vpError()<<std::endl;
       std::cout<<" vLeft="<<vLeft<<"  vRight="<<vRight<<std::endl;
-      std::cout<<" Error="<<findError()<<std::endl;
+      std::cout<<"RIght Error="<<sideError(right)<<std::endl;
        usleep(10000);
   } //while
 
