@@ -14,6 +14,19 @@ int getWhitePixels(int row, int column){
 	}
 	return white;
 }
+
+int getRedPixels(int row, int column){
+	int red;
+	int pix=get_pixel(cameraView, row, column, 3);
+	if (pix>=250){
+		red=1;
+	}
+	else {
+		red=0;
+	}
+	return red;
+}
+
 /**function that finds difference between centre of line and centre of image
  * positive if right of line, negative if left of line
  * returns that value multiplied by kp.error
