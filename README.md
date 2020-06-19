@@ -3,7 +3,7 @@ ENGR101 AVC project
 
 *Windows 10 Installation guide*
 (This program uses the Geany C++ text editor, please ensure this environment is installed first)
-1) Head to the Engr 101 page https://ecs.wgtn.ac.nz/Courses/ENGR101_2020T1/Project3 and install the following files from the attachments section at the bottom of the page: AVC_Win10.zip & SFML.zip.
+1) Download all the files from this repository into a zip.
 2) Extract the contents of SFML.zip. Then open the extracted version and save the SFML folder inside to your C: drive following this path: This PC > Local Disk(C:)
 3) Open control panel (press windows key and start typing "control panel") and go to System and Security > System > Advanced System Settings > Environment Variables. In the list "System Variables" select "Path" and click "Edit..."
 4) In here click "New" and paste this "C:\\mingw\bin". Now click "OK" until you have exited the control panel.
